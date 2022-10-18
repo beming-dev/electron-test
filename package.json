@@ -38,7 +38,8 @@
             "prerelease": false,
             "draft": true
         }
-      ]
+      }
+      ],
       "packagerConfig": {},
       "makers": [
         {
