@@ -1,5 +1,4 @@
-const { ipcMain } = require("electron");
-const { app, BrowserWindow, Menu, shell } = require("electron");
+const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
 const path = require("path");
 
 const menuItems = [
@@ -21,8 +20,12 @@ const menuItems = [
             height: 500,
             width: 800,
             show: false,
+            webPreferences: {
+              preload: path.join(__dirname, "cameraPreload.js"),
+            },
           });
 
+          ipcMain.on("close-window-2", () => win2.close());
           win2.webContents.openDevTools();
           win2.loadFile("camera.html");
           win2.once("ready-to-show", () => win2.show());
@@ -55,6 +58,12 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
+  });
+
+  win.webContents.openDevTools();
+
+  ipcMain.on("set-image", (event, data) => {
+    win.webContents.send("get-image", data);
   });
 
   ipcMain.handle("ping", () => "pong");
